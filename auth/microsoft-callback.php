@@ -212,4 +212,4 @@ $_SESSION['username'] = $user['username'];
 $_SESSION['is_admin'] = $user['is_admin'];
 
 flash('success', 'Willkommen, ' . ($user['full_name'] ?: $user['username']) . '!');
-redirect(APP_URL . '/index.php');
+redirect(APP_URL . '/portal.php');

@@ -27,6 +27,7 @@
                 <?php if (is_admin()): ?>
                     <a href="<?= APP_URL ?>/admin/index.php" class="admin-link">Admin</a>
                 <?php endif; ?>
+                <a href="<?= APP_URL ?>/portal.php">Portal</a>
                 <span class="user">👤 <?= e($_SESSION['username']) ?></span>
                 <a href="<?= APP_URL ?>/logout.php" class="btn-small">Abmelden</a>
             <?php else: ?>

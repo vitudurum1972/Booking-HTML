@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config.php';
 
-if (is_logged_in()) redirect('index.php');
+if (is_logged_in()) redirect('portal.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['username'] = $user['username'];
         $_SESSION['is_admin'] = $user['is_admin'];
         flash('success', 'Willkommen, ' . $user['username'] . '!');
-        redirect('index.php');
+        redirect('portal.php');
     } else {
         flash('error', 'Ungültige Anmeldedaten.');
     }
