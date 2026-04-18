@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $hash = password_hash($password, PASSWORD_BCRYPT);
         $ins = $pdo->prepare('
-            INSERT INTO users (username, email, password_hash, full_name, is_admin, access_reservation, access_crm, auth_provider)
-            VALUES (?, ?, ?, ?, ?, ?, ?, "local")
+            INSERT INTO users (username, email, password_hash, full_name, is_admin, access_reservation, access_crm, email_verified, auth_provider)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 1, "local")
         ');
         $ins->execute([$username, $email, $hash, $full_name, $is_admin, $access_reservation, $access_crm]);
         flash('success', 'Benutzer «' . $username . '» wurde erstellt.');

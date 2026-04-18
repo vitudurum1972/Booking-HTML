@@ -7,10 +7,15 @@ define('DB_NAME', 'reservation_system');
 define('DB_USER', 'reservation');
 define('DB_PASS', 'Explorer$72');  // <-- Hier das DB-Passwort eintragen
 
-// E-Mail Konfiguration
-define('MAIL_FROM', 'noreply@example.com');
-define('MAIL_FROM_NAME', 'Reservationssystem');
-define('ADMIN_EMAIL', 'admin@example.com');
+// E-Mail Konfiguration (SMTP via Microsoft 365)
+define('SMTP_HOST',     'smtp.office365.com');
+define('SMTP_PORT',     587);                                    // 587 = STARTTLS, 465 = SSL
+define('SMTP_USER',     'informatik@wangen-bruettisellen.ch');
+define('SMTP_PASS',     '');                                     // <-- SMTP-Passwort hier eintragen
+define('MAIL_FROM',     'informatik@wangen-bruettisellen.ch');
+define('MAIL_FROM_NAME','Gemeindeportal Wangen-Brüttisellen');
+define('ADMIN_EMAIL',   'informatik@wangen-bruettisellen.ch');
+define('SMTP_DEBUG',    false);                                  // Auf true für Fehlersuche
 
 // App-Einstellungen
 define('APP_NAME', 'Reservation-System');

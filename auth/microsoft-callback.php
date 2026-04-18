@@ -195,8 +195,8 @@ if (!$user) {
     }
 
     $ins = $pdo->prepare('
-        INSERT INTO users (username, email, full_name, auth_provider, microsoft_id, is_admin)
-        VALUES (?, ?, ?, "microsoft", ?, 0)
+        INSERT INTO users (username, email, full_name, auth_provider, microsoft_id, is_admin, email_verified)
+        VALUES (?, ?, ?, "microsoft", ?, 0, 1)
     ');
     $ins->execute([$username, $email, $name, $msId]);
     $userId = (int)$pdo->lastInsertId();
