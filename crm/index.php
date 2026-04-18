@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config.php';
-require_login();
+require_access_crm();
 
 // Suchparameter
 $search   = trim($_GET['q']   ?? '');

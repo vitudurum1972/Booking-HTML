@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/config.php';
-require_login();
+require_access_reservation();
 
 // Dashboard-Daten
 $stmt = $pdo->query('SELECT COUNT(*) FROM items WHERE available = 1');

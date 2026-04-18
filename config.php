@@ -79,6 +79,30 @@ function require_admin() {
     }
 }
 
+function has_access_reservation() {
+    return isset($_SESSION['access_reservation']) && $_SESSION['access_reservation'] == 1;
+}
+
+function has_access_crm() {
+    return isset($_SESSION['access_crm']) && $_SESSION['access_crm'] == 1;
+}
+
+function require_access_reservation() {
+    require_login();
+    if (!has_access_reservation() && !is_admin()) {
+        http_response_code(403);
+        die('Kein Zugriff auf das Reservationssystem.');
+    }
+}
+
+function require_access_crm() {
+    require_login();
+    if (!has_access_crm() && !is_admin()) {
+        http_response_code(403);
+        die('Kein Zugriff auf das CRM-System.');
+    }
+}
+
 function flash($key, $msg = null) {
     if ($msg === null) {
         $val = $_SESSION['flash'][$key] ?? null;

@@ -175,6 +175,14 @@ require_login();
         .portal-card.crm-card .portal-card-cta { background: #3a4bb0; }
         .portal-card.crm-card:hover .portal-card-cta { background: #2d3a8c; }
 
+        /* Admin/Benutzerverwaltung card accent color */
+        .portal-card.admin-card::before { background: #7b2d8e; }
+        .portal-card.admin-card:hover { border-color: #7b2d8e; box-shadow: 0 12px 40px rgba(123, 45, 142, 0.12); }
+        .portal-card.admin-card:hover h2 { color: #7b2d8e; }
+        .portal-card.admin-card .portal-card-features li::before { background: #7b2d8e; }
+        .portal-card.admin-card .portal-card-cta { background: #7b2d8e; }
+        .portal-card.admin-card:hover .portal-card-cta { background: #5e1f6d; }
+
         /* ── Info Strip ── */
         .info-strip {
             background: var(--bg-alt);
@@ -265,6 +273,7 @@ require_login();
         <div class="portal-grid">
 
             <!-- Reservation System -->
+            <?php if (has_access_reservation() || is_admin()): ?>
             <a href="index.php" class="portal-card">
                 <span class="portal-card-icon">🔧</span>
                 <h2>Reservationssystem</h2>
@@ -280,8 +289,10 @@ require_login();
                     <span class="arrow">→</span>
                 </span>
             </a>
+            <?php endif; ?>
 
             <!-- CRM System -->
+            <?php if (has_access_crm() || is_admin()): ?>
             <a href="crm/index.php" class="portal-card crm-card">
                 <span class="portal-card-icon">👥</span>
                 <h2>CRM-System</h2>
@@ -297,6 +308,26 @@ require_login();
                     <span class="arrow">→</span>
                 </span>
             </a>
+            <?php endif; ?>
+
+            <?php if (is_admin()): ?>
+            <!-- Benutzerverwaltung -->
+            <a href="portal_users.php" class="portal-card admin-card">
+                <span class="portal-card-icon">🛡</span>
+                <h2>Benutzerverwaltung</h2>
+                <p>Verwalten Sie Benutzerkonten, vergeben Sie Administratorrechte und erstellen Sie neue Zugänge.</p>
+                <ul class="portal-card-features">
+                    <li>Benutzerkonten erstellen und löschen</li>
+                    <li>Administratorrechte vergeben</li>
+                    <li>Übersicht aller Benutzer</li>
+                    <li>Reservierungsstatistiken pro Benutzer</li>
+                </ul>
+                <span class="portal-card-cta">
+                    Zur Benutzerverwaltung
+                    <span class="arrow">→</span>
+                </span>
+            </a>
+            <?php endif; ?>
 
         </div>
     </div>

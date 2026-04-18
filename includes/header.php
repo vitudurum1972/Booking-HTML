@@ -21,9 +21,11 @@
         </a>
         <nav>
             <?php if (is_logged_in()): ?>
+                <?php if (has_access_reservation() || is_admin()): ?>
                 <a href="<?= APP_URL ?>/items.php">Gegenstände</a>
                 <a href="<?= APP_URL ?>/calendar.php">Kalender</a>
                 <a href="<?= APP_URL ?>/my_reservations.php">Meine Reservierungen</a>
+                <?php endif; ?>
                 <?php if (is_admin()): ?>
                     <a href="<?= APP_URL ?>/admin/index.php" class="admin-link">Admin</a>
                 <?php endif; ?>

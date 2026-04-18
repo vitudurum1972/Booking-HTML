@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/includes/mail.php';
-require_login();
+require_access_reservation();
 
 $itemId = (int)($_GET['item_id'] ?? $_POST['item_id'] ?? 0);
 $stmt = $pdo->prepare('SELECT * FROM items WHERE id = ? AND available = 1');

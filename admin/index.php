@@ -24,7 +24,7 @@ include __DIR__ . '/../includes/header.php';
 <div class="grid-2">
     <a href="items.php" class="card link-card"><h3>🔧 Gegenstände verwalten</h3><p>Werkzeuge hinzufügen, bearbeiten, entfernen.</p></a>
     <a href="reservations.php" class="card link-card"><h3>📋 Reservierungen verwalten</h3><p>Anfragen prüfen und bestätigen.</p></a>
-    <a href="users.php" class="card link-card"><h3>👥 Benutzer verwalten</h3><p>Benutzerkonten einsehen.</p></a>
+    <a href="../portal_users.php" class="card link-card"><h3>👥 Benutzer verwalten</h3><p>Benutzerkonten einsehen (im Portal).</p></a>
     <a href="../index.php" class="card link-card"><h3>⬅ Zurück zur App</h3><p>Zur Benutzeransicht wechseln.</p></a>
 </div>
 

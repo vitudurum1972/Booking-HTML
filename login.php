@@ -13,9 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->fetch();
 
     if ($user && !empty($user['password_hash']) && password_verify($password, $user['password_hash'])) {
-        $_SESSION['user_id']  = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['is_admin'] = $user['is_admin'];
+        $_SESSION['user_id']            = $user['id'];
+        $_SESSION['username']           = $user['username'];
+        $_SESSION['is_admin']           = $user['is_admin'];
+        $_SESSION['access_reservation'] = $user['access_reservation'] ?? 1;
+        $_SESSION['access_crm']         = $user['access_crm'] ?? 1;
         flash('success', 'Willkommen, ' . $user['username'] . '!');
         redirect('portal.php');
     } else {

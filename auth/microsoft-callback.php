@@ -207,9 +207,11 @@ if (!$user) {
 }
 
 /* ------ 4. Session anlegen ------ */
-$_SESSION['user_id']  = $user['id'];
-$_SESSION['username'] = $user['username'];
-$_SESSION['is_admin'] = $user['is_admin'];
+$_SESSION['user_id']            = $user['id'];
+$_SESSION['username']           = $user['username'];
+$_SESSION['is_admin']           = $user['is_admin'];
+$_SESSION['access_reservation'] = $user['access_reservation'] ?? 1;
+$_SESSION['access_crm']         = $user['access_crm'] ?? 1;
 
 flash('success', 'Willkommen, ' . ($user['full_name'] ?: $user['username']) . '!');
 redirect(APP_URL . '/portal.php');
