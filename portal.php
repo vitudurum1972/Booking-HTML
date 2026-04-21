@@ -246,6 +246,14 @@ require_login();
         </a>
         <nav style="display:flex; align-items:center; gap:20px;">
             <span style="font-size:14px; color:var(--text-muted);">👤 <?= e($_SESSION['username']) ?></span>
+            <a href="change_password.php"
+               style="display:inline-block; padding:8px 18px; border:1px solid var(--border-strong);
+                      font-size:13px; font-weight:600; color:var(--text); text-decoration:none;
+                      transition:background .15s, border-color .15s;"
+               onmouseover="this.style.background='var(--bg-alt)'; this.style.borderColor='var(--primary)';"
+               onmouseout="this.style.background=''; this.style.borderColor='var(--border-strong)';">
+                Passwort ändern
+            </a>
             <a href="logout.php"
                style="display:inline-block; padding:8px 18px; border:1px solid var(--border-strong);
                       font-size:13px; font-weight:600; color:var(--text); text-decoration:none;

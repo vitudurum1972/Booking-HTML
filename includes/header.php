@@ -31,6 +31,7 @@
                 <?php endif; ?>
                 <a href="<?= APP_URL ?>/portal.php">Portal</a>
                 <span class="user">👤 <?= e($_SESSION['username']) ?></span>
+                <a href="<?= APP_URL ?>/change_password.php" class="btn-small">Passwort ändern</a>
                 <a href="<?= APP_URL ?>/logout.php" class="btn-small">Abmelden</a>
             <?php else: ?>
                 <a href="<?= APP_URL ?>/login.php">Anmelden</a>
