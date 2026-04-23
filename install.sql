@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS reservations (
     end_date    DATETIME NOT NULL,
     status      ENUM('pending','approved','rejected','cancelled','completed') DEFAULT 'approved',
     usage_type  ENUM('privat','geschaeftlich') NOT NULL DEFAULT 'privat',
+    occasion    VARCHAR(255) NOT NULL DEFAULT '',
     notes       TEXT,
     created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,

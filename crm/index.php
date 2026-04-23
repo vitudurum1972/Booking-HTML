@@ -57,9 +57,24 @@ $pageTitle = 'Kontakte – CRM-System';
 include __DIR__ . '/includes/header.php';
 ?>
 
+<?php
+// URL-Query für Export-Button (gleiche Filter übernehmen)
+$exportQuery = http_build_query(array_filter([
+    'q'   => $search,
+    'cat' => $catId > 0 ? $catId : null,
+    'tag' => $tag,
+], fn($v) => $v !== null && $v !== '' && $v !== 0));
+?>
 <div class="page-header">
     <h1>Kontakte</h1>
-    <a href="<?= APP_URL ?>/crm/contact_form.php" class="btn-primary">+ Neuer Kontakt</a>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="<?= APP_URL ?>/crm/export.php<?= $exportQuery ? '?' . $exportQuery : '' ?>"
+           class="btn-secondary"
+           title="Aktuell gefilterte Kontakte als Excel-Datei herunterladen">
+            📊 Excel-Export
+        </a>
+        <a href="<?= APP_URL ?>/crm/contact_form.php" class="btn-primary">+ Neuer Kontakt</a>
+    </div>
 </div>
 
 <!-- Filter Bar -->

@@ -105,6 +105,7 @@
             <?php if (is_logged_in()): ?>
                 <?php if (has_access_crm() || is_admin()): ?>
                 <a href="<?= APP_URL ?>/crm/index.php">Kontakte</a>
+                <a href="<?= APP_URL ?>/crm/events.php">Events</a>
                 <a href="<?= APP_URL ?>/crm/categories.php">Kategorien</a>
                 <a href="<?= APP_URL ?>/crm/contact_form.php" class="crm-btn">+ Neuer Kontakt</a>
                 <?php endif; ?>

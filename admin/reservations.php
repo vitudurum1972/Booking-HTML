@@ -66,6 +66,11 @@ include __DIR__ . '/../includes/header.php';
                 <span class="badge usage-<?= e($utype) ?>">
                     <?= $utype === 'geschaeftlich' ? 'Geschäftlich' : 'Privat' ?>
                 </span>
+                <?php if ($utype === 'geschaeftlich' && !empty($r['occasion'])): ?>
+                    <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+                        <strong>Anlass:</strong> <?= e($r['occasion']) ?>
+                    </div>
+                <?php endif; ?>
             </td>
             <td><span class="badge status-<?= e($r['status']) ?>"><?= e($r['status']) ?></span></td>
             <td>

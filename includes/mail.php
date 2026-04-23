@@ -70,6 +70,12 @@ function notify_new_reservation($pdo, $reservationId) {
         $end   = date('d.m.Y H:i', strtotime($r['end_date']));
         $usage = ($r['usage_type'] ?? 'privat') === 'geschaeftlich' ? 'Geschäftlich' : 'Privat';
 
+        // Anlass nur bei geschäftlicher Verwendung anzeigen
+        $occasionLine = '';
+        if (($r['usage_type'] ?? 'privat') === 'geschaeftlich' && !empty($r['occasion'])) {
+            $occasionLine = '<li><strong>Anlass:</strong> ' . htmlspecialchars($r['occasion'], ENT_QUOTES, 'UTF-8') . '</li>';
+        }
+
         // Benutzer informieren
         $userBody = "<h2>Reservierung bestätigt</h2>
             <p>Hallo {$r['username']},</p>
@@ -79,6 +85,7 @@ function notify_new_reservation($pdo, $reservationId) {
               <li><strong>Von:</strong> {$start}</li>
               <li><strong>Bis:</strong> {$end}</li>
               <li><strong>Verwendung:</strong> {$usage}</li>
+              {$occasionLine}
               <li><strong>Status:</strong> Bestätigt</li>
             </ul>
             <p>Sie können Ihre Reservierung jederzeit im Portal einsehen oder stornieren.</p>";
@@ -92,6 +99,7 @@ function notify_new_reservation($pdo, $reservationId) {
               <li><strong>Von:</strong> {$start}</li>
               <li><strong>Bis:</strong> {$end}</li>
               <li><strong>Verwendung:</strong> {$usage}</li>
+              {$occasionLine}
             </ul>";
         send_mail(ADMIN_EMAIL, 'Neue Reservierung: ' . $r['item_name'], $adminBody);
     } catch (\Throwable $e) {
