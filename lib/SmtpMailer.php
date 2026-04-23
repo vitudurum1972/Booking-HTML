@@ -47,12 +47,14 @@ class SmtpMailer
     /**
      * HTML-Mail versenden.
      *
-     * @param  string|array $to       Empfänger (String oder Array für mehrere)
-     * @param  string       $subject  Betreff
-     * @param  string       $htmlBody HTML-Inhalt
+     * @param  string|array $to          Empfänger (String oder Array für mehrere)
+     * @param  string       $subject     Betreff
+     * @param  string       $htmlBody    HTML-Inhalt
+     * @param  string|null  $icsContent  Optionaler iCalendar-Inhalt (VCALENDAR)
+     * @param  string       $icsMethod   iCalendar-Methode: REQUEST, CANCEL, PUBLISH (Standard: REQUEST)
      * @return bool
      */
-    public function send($to, string $subject, string $htmlBody): bool
+    public function send($to, string $subject, string $htmlBody, ?string $icsContent = null, string $icsMethod = 'REQUEST'): bool
     {
         $this->lastError = '';
         $this->log       = [];
@@ -79,7 +81,7 @@ class SmtpMailer
             // DATA
             $this->command('DATA', 354);
 
-            $message = $this->buildMessage($to, $subject, $htmlBody);
+            $message = $this->buildMessage($to, $subject, $htmlBody, $icsContent, $icsMethod);
             $this->sendData($message);
             $this->command('.', 250);
 
@@ -222,9 +224,8 @@ class SmtpMailer
         return $response;
     }
 
-    private function buildMessage(array $to, string $subject, string $htmlBody): string
+    private function buildMessage(array $to, string $subject, string $htmlBody, ?string $icsContent = null, string $icsMethod = 'REQUEST'): string
     {
-        $boundary = '----=_Part_' . bin2hex(random_bytes(12));
         $date     = date('r');
         $msgId    = '<' . bin2hex(random_bytes(16)) . '@' . $this->host . '>';
 
@@ -236,32 +237,83 @@ class SmtpMailer
         // Subject UTF-8 kodiert
         $subjectEncoded = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
+        // Gemeinsame Header
         $headers  = "Date: {$date}\r\n";
         $headers .= "From: {$from}\r\n";
         $headers .= "To: " . implode(', ', $to) . "\r\n";
         $headers .= "Subject: {$subjectEncoded}\r\n";
         $headers .= "Message-ID: {$msgId}\r\n";
         $headers .= "MIME-Version: 1.0\r\n";
-        $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n";
-        $headers .= "\r\n";
 
         // Plaintext-Version (einfacher Strip der HTML-Tags)
         $plaintext = strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>', '</li>'], "\n", $htmlBody));
         $plaintext = html_entity_decode($plaintext, ENT_QUOTES, 'UTF-8');
         $plaintext = preg_replace("/\n{3,}/", "\n\n", trim($plaintext));
 
-        $body  = "--{$boundary}\r\n";
+        $fullHtml = '<html><body style="font-family:Arial,sans-serif;">' . $htmlBody . '</body></html>';
+
+        // Wenn kein ICS: einfache multipart/alternative-Mail wie bisher
+        if ($icsContent === null || $icsContent === '') {
+            $boundary = '----=_Alt_' . bin2hex(random_bytes(12));
+            $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n";
+            $headers .= "\r\n";
+
+            $body  = "--{$boundary}\r\n";
+            $body .= "Content-Type: text/plain; charset=UTF-8\r\n";
+            $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+            $body .= chunk_split(base64_encode($plaintext)) . "\r\n";
+
+            $body .= "--{$boundary}\r\n";
+            $body .= "Content-Type: text/html; charset=UTF-8\r\n";
+            $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+            $body .= chunk_split(base64_encode($fullHtml)) . "\r\n";
+
+            $body .= "--{$boundary}--\r\n";
+
+            return $headers . $body;
+        }
+
+        // Mit ICS: multipart/mixed → multipart/alternative (text+html+calendar inline) + Anhang
+        $mixedBoundary = '----=_Mixed_' . bin2hex(random_bytes(12));
+        $altBoundary   = '----=_Alt_'   . bin2hex(random_bytes(12));
+
+        $method = strtoupper($icsMethod);
+        $icsCrlf = preg_replace("/\r\n|\r|\n/", "\r\n", $icsContent);
+        $icsB64  = chunk_split(base64_encode($icsCrlf));
+
+        $headers .= "Content-Type: multipart/mixed; boundary=\"{$mixedBoundary}\"\r\n";
+        $headers .= "\r\n";
+
+        // Teil 1: multipart/alternative (plain + html + text/calendar inline)
+        $body  = "--{$mixedBoundary}\r\n";
+        $body .= "Content-Type: multipart/alternative; boundary=\"{$altBoundary}\"\r\n\r\n";
+
+        $body .= "--{$altBoundary}\r\n";
         $body .= "Content-Type: text/plain; charset=UTF-8\r\n";
         $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
         $body .= chunk_split(base64_encode($plaintext)) . "\r\n";
 
-        $body .= "--{$boundary}\r\n";
+        $body .= "--{$altBoundary}\r\n";
         $body .= "Content-Type: text/html; charset=UTF-8\r\n";
         $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
-        $fullHtml = '<html><body style="font-family:Arial,sans-serif;">' . $htmlBody . '</body></html>';
         $body .= chunk_split(base64_encode($fullHtml)) . "\r\n";
 
-        $body .= "--{$boundary}--\r\n";
+        // text/calendar inline → Outlook rendert damit die Termin-Buttons
+        $body .= "--{$altBoundary}\r\n";
+        $body .= "Content-Type: text/calendar; method={$method}; charset=UTF-8\r\n";
+        $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $body .= $icsB64 . "\r\n";
+
+        $body .= "--{$altBoundary}--\r\n";
+
+        // Teil 2: application/ics als herunterladbarer Anhang "termin.ics"
+        $body .= "--{$mixedBoundary}\r\n";
+        $body .= "Content-Type: application/ics; name=\"termin.ics\"\r\n";
+        $body .= "Content-Disposition: attachment; filename=\"termin.ics\"\r\n";
+        $body .= "Content-Transfer-Encoding: base64\r\n\r\n";
+        $body .= $icsB64 . "\r\n";
+
+        $body .= "--{$mixedBoundary}--\r\n";
 
         return $headers . $body;
     }
